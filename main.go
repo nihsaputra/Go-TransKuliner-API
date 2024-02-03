@@ -2,6 +2,7 @@ package main
 
 import (
 	"TransKuliner/app"
+	"TransKuliner/controller"
 	"TransKuliner/repository"
 	"TransKuliner/service"
 )
@@ -19,8 +20,21 @@ func main() {
 	productRepository := repository.NewProductRepository(mysql)
 
 	// Service
-	service.NewCustomerService(customerRepository)
+	customerService := service.NewCustomerService(customerRepository)
 	categoryService := service.NewCategoryService(categoryRepository)
-	service.NewProductService(productRepository, categoryService)
+	productService := service.NewProductService(productRepository, categoryService)
+
+	// Controller
+	customerController := controller.NewCustomerController(customerService)
+	categoryController := controller.NewCategoryController(categoryService)
+	productController := controller.NewProductController(productService)
+
+	// Router
+	app.NewCustomerRouter(customerController)
+	app.NewCategoryRouter(categoryController)
+	app.NewProductRouter(productController)
+
+	router := app.Router
+	router.Listen(":8080")
 
 }

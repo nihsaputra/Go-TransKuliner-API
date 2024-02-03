@@ -12,10 +12,13 @@ type CustomerServiceImpl struct {
 	CustomerRepository repository.CustomerRepository
 }
 
-func (c *CustomerServiceImpl) FindAll() []response.CustomerResponse {
+func (c *CustomerServiceImpl) FindAll() ([]response.CustomerResponse, error) {
 	var customerResponses []response.CustomerResponse
 	findAll, err := c.CustomerRepository.FindAll()
-	handler.PanicIfError(err)
+
+	if err != nil {
+		return customerResponses, err
+	}
 
 	for _, customer := range findAll {
 		customerResponse := response.CustomerResponse{
@@ -29,12 +32,15 @@ func (c *CustomerServiceImpl) FindAll() []response.CustomerResponse {
 		customerResponses = append(customerResponses, customerResponse)
 	}
 
-	return customerResponses
+	return customerResponses, nil
 }
 
-func (c *CustomerServiceImpl) FindById(id uint) response.CustomerResponse {
+func (c *CustomerServiceImpl) FindById(id uint) (response.CustomerResponse, error) {
 	findById, err := c.CustomerRepository.FindById(id)
-	handler.PanicIfError(err)
+
+	if err != nil {
+		return response.CustomerResponse{}, err
+	}
 
 	customerResponse := response.CustomerResponse{
 		ID:          findById.ID,
@@ -45,7 +51,7 @@ func (c *CustomerServiceImpl) FindById(id uint) response.CustomerResponse {
 		UpdatedAt:   findById.UpdatedAt,
 	}
 
-	return customerResponse
+	return customerResponse, nil
 }
 
 func (c *CustomerServiceImpl) Create(request request.CustomerRequest) response.CustomerResponse {
