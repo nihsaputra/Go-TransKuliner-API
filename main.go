@@ -3,6 +3,7 @@ package main
 import (
 	"TransKuliner/app"
 	"TransKuliner/repository"
+	"TransKuliner/service"
 )
 
 func main() {
@@ -13,7 +14,13 @@ func main() {
 	app.NewMigration(mysql)
 
 	// Repository
-	repository.NewCategoryRepository(mysql)
-	repository.NewCustomerRepository(mysql)
-	repository.NewProductRepository(mysql)
+	customerRepository := repository.NewCustomerRepository(mysql)
+	categoryRepository := repository.NewCategoryRepository(mysql)
+	productRepository := repository.NewProductRepository(mysql)
+
+	// Service
+	service.NewCustomerService(customerRepository)
+	categoryService := service.NewCategoryService(categoryRepository)
+	service.NewProductService(productRepository, categoryService)
+
 }
