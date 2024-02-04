@@ -18,10 +18,10 @@ type SaleServiceImpl struct {
 
 func (s *SaleServiceImpl) GetAll() []response.SaleResponse {
 	var saleResponses []response.SaleResponse
-	findAll, err := s.SaleRepository.FindAll()
-	halper.PanicIfError(err)
+	sales, errFindAllSale := s.SaleRepository.FindAll()
+	halper.PanicIfError(errFindAllSale)
 
-	for _, sale := range findAll {
+	for _, sale := range sales {
 		saleResponse := response.SaleResponse{
 			ID:        sale.ID,
 			Product:   halper.ProductToProductSomeResponse(sale.Product),
@@ -34,14 +34,14 @@ func (s *SaleServiceImpl) GetAll() []response.SaleResponse {
 }
 
 func (s *SaleServiceImpl) GetById(id uint) response.SaleResponse {
-	findById, err := s.SaleRepository.FindById(id)
-	halper.PanicIfError(err)
+	sale, errFindByIdSale := s.SaleRepository.FindById(id)
+	halper.PanicIfError(errFindByIdSale)
 
 	saleResponse := response.SaleResponse{
-		ID:        findById.ID,
-		Product:   halper.ProductToProductSomeResponse(findById.Product),
-		Customer:  halper.CustomerToCustomerSomeResonse(findById.Customer),
-		CreatedAt: findById.CreatedAt,
+		ID:        sale.ID,
+		Product:   halper.ProductToProductSomeResponse(sale.Product),
+		Customer:  halper.CustomerToCustomerSomeResonse(sale.Customer),
+		CreatedAt: sale.CreatedAt,
 	}
 
 	return saleResponse
@@ -49,8 +49,8 @@ func (s *SaleServiceImpl) GetById(id uint) response.SaleResponse {
 
 func (s *SaleServiceImpl) Create(request request.SaleRequest) response.SaleResponse {
 	productResponse := s.ProductService.FindById(request.ProductId)
-	customerResponse, err := s.CustomerService.FindById(request.CustomerId)
-	halper.PanicIfError(err)
+	customerResponse, errFindCustomer := s.CustomerService.FindById(request.CustomerId)
+	halper.PanicIfError(errFindCustomer)
 
 	sale := entity.Sale{
 		ProductId:  productResponse.ID,

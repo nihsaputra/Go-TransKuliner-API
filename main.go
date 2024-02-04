@@ -19,25 +19,28 @@ func main() {
 	categoryRepository := implRepository.NewCategoryRepository(mysql)
 	productRepository := implRepository.NewProductRepository(mysql)
 	saleRepository := implRepository.NewSaleRepository(mysql)
-	implRepository.NewSaleDetailRepository(mysql)
+	saleDetailRepository := implRepository.NewSaleDetailRepository(mysql)
 
 	// Service
 	customerService := implService.NewCustomerService(customerRepository)
 	categoryService := implService.NewCategoryService(categoryRepository)
 	productService := implService.NewProductService(productRepository, categoryService)
 	saleService := implService.NewSaleService(saleRepository, productService, customerService)
+	saleDetailService := implService.NewSaleDetailService(saleDetailRepository, saleService)
 
 	// Controller
 	customerController := implController.NewCustomerController(customerService)
 	categoryController := implController.NewCategoryController(categoryService)
 	productController := implController.NewProductController(productService)
 	saleController := implController.NewSaleController(saleService)
+	saleDetailController := implController.NewSaleDetailController(saleDetailService)
 
 	// Router
 	app.NewCustomerRouter(customerController)
 	app.NewCategoryRouter(categoryController)
 	app.NewProductRouter(productController)
 	app.NewSaleRouter(saleController)
+	app.NewSaleDetailRouter(saleDetailController)
 
 	router := app.Router
 	router.Listen(":8080")

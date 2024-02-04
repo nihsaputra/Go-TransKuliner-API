@@ -20,23 +20,8 @@ func ProductToProductSomeResponse(product entity.Product) response.ProductSomeRe
 	}
 	return productSomeResponse
 }
-func ProductResponseToProductSomeResponse(product response.ProductResponse) response.ProductSomeResponse {
-	productSomeResponse := response.ProductSomeResponse{
-		ID:    product.ID,
-		Name:  product.Name,
-		Price: product.Price,
-	}
-	return productSomeResponse
-}
 
 func CustomerToCustomerSomeResonse(customer entity.Customer) response.CustomerSomeResponse {
-	customerSomeResonse := response.CustomerSomeResponse{
-		ID:   customer.ID,
-		Name: customer.Name,
-	}
-	return customerSomeResonse
-}
-func CustomerResponseToCustomerSomeResonse(customer response.CustomerResponse) response.CustomerSomeResponse {
 	customerSomeResonse := response.CustomerSomeResponse{
 		ID:   customer.ID,
 		Name: customer.Name,

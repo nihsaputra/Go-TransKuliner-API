@@ -12,13 +12,13 @@ type SaleDetailRepositoryImpl struct {
 
 func (s *SaleDetailRepositoryImpl) FindAll() ([]entity.SaleDetail, error) {
 	var saleDetails []entity.SaleDetail
-	tx := s.Db.Find(&saleDetails)
+	tx := s.Db.Preload("Sale").Find(&saleDetails)
 	return saleDetails, tx.Error
 }
 
 func (s *SaleDetailRepositoryImpl) FindById(id uint) (entity.SaleDetail, error) {
 	var saleDetail entity.SaleDetail
-	tx := s.Db.First(&saleDetail, id)
+	tx := s.Db.Preload("Sale").First(&saleDetail, id)
 	return saleDetail, tx.Error
 }
 

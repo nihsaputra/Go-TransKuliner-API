@@ -22,6 +22,7 @@ func NewCategoryRouter(categoryController controller.CategoryController) {
 	Router.Put("/categories", categoryController.Update)
 	Router.Delete("/categories/:id", categoryController.Delete)
 }
+
 func NewProductRouter(productController controller.ProductController) {
 	Router.Get("/products", productController.GetAll)
 	Router.Get("/products/:id", productController.GetById)
@@ -29,8 +30,15 @@ func NewProductRouter(productController controller.ProductController) {
 	Router.Put("/products", productController.Update)
 	Router.Delete("/products/:id", productController.Delete)
 }
+
 func NewSaleRouter(saleController controller.SaleController) {
 	Router.Get("/sales", saleController.GetAll)
 	Router.Get("/sales/:id", saleController.GetById)
 	Router.Post("/sales", saleController.Create)
+}
+
+func NewSaleDetailRouter(saleDetailController controller.SaleDetailController) {
+	Router.Get("/sale-details", saleDetailController.GetAll)
+	Router.Get("/sale-details/:id", saleDetailController.GetById)
+	Router.Post("/sale-details", saleDetailController.Create)
 }
