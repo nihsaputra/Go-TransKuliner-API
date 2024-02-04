@@ -57,6 +57,7 @@ func (s *SaleServiceImpl) Create(request request.SaleRequest) response.SaleRespo
 		CustomerId: customerResponse.ID,
 		CreatedAt:  time.Now(),
 	}
+
 	save, errSave := s.SaleRepository.Save(sale)
 	halper.PanicIfError(errSave)
 

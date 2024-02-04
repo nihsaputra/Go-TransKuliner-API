@@ -25,17 +25,19 @@ func main() {
 	customerService := implService.NewCustomerService(customerRepository)
 	categoryService := implService.NewCategoryService(categoryRepository)
 	productService := implService.NewProductService(productRepository, categoryService)
-	implService.NewSaleService(saleRepository, productService, customerService)
+	saleService := implService.NewSaleService(saleRepository, productService, customerService)
 
 	// Controller
 	customerController := implController.NewCustomerController(customerService)
 	categoryController := implController.NewCategoryController(categoryService)
 	productController := implController.NewProductController(productService)
+	saleController := implController.NewSaleController(saleService)
 
 	// Router
 	app.NewCustomerRouter(customerController)
 	app.NewCategoryRouter(categoryController)
 	app.NewProductRouter(productController)
+	app.NewSaleRouter(saleController)
 
 	router := app.Router
 	router.Listen(":8080")

@@ -29,3 +29,8 @@ func NewProductRouter(productController controller.ProductController) {
 	Router.Put("/products", productController.Update)
 	Router.Delete("/products/:id", productController.Delete)
 }
+func NewSaleRouter(saleController controller.SaleController) {
+	Router.Get("/sales", saleController.GetAll)
+	Router.Get("/sales/:id", saleController.GetById)
+	Router.Post("/sales", saleController.Create)
+}
