@@ -1,4 +1,4 @@
-package service
+package impl
 
 import (
 	"TransKuliner/handler"
@@ -6,11 +6,12 @@ import (
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
 	"TransKuliner/repository"
+	"TransKuliner/service"
 )
 
 type ProductServiceImpl struct {
 	ProductRepository repository.ProductRepository
-	CategoryService   CategoryService
+	CategoryService   service.CategoryService
 }
 
 func (p *ProductServiceImpl) FindAll() []response.ProductResponse {
@@ -113,7 +114,7 @@ func (p *ProductServiceImpl) Delete(id uint) string {
 	return "delete successfully"
 }
 
-func NewProductService(repository repository.ProductRepository, service CategoryService) ProductService {
+func NewProductService(repository repository.ProductRepository, service service.CategoryService) service.ProductService {
 	return &ProductServiceImpl{
 		ProductRepository: repository,
 		CategoryService:   service,

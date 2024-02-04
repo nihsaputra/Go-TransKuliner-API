@@ -1,7 +1,8 @@
-package repository
+package impl
 
 import (
 	"TransKuliner/model/entity"
+	"TransKuliner/repository"
 	"gorm.io/gorm"
 )
 
@@ -31,7 +32,7 @@ func (c *CategoryRepositoryImpl) Delete(category entity.Category) error {
 	return tx.Error
 }
 
-func NewCategoryRepository(db *gorm.DB) CategoryRepository {
+func NewCategoryRepository(db *gorm.DB) repository.CategoryRepository {
 	return &CategoryRepositoryImpl{
 		Db: db,
 	}

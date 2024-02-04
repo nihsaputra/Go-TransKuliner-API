@@ -1,6 +1,7 @@
-package controller
+package impl
 
 import (
+	"TransKuliner/controller"
 	"TransKuliner/handler"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
@@ -88,7 +89,7 @@ func (p *ProductControllerImpl) Delete(ctx *fiber.Ctx) error {
 	return ctx.Status(http.StatusOK).JSON(webResponse)
 }
 
-func NewProductController(service service.ProductService) ProductController {
+func NewProductController(service service.ProductService) controller.ProductController {
 	return &ProductControllerImpl{
 		ProductService: service,
 	}

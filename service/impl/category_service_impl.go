@@ -1,4 +1,4 @@
-package service
+package impl
 
 import (
 	"TransKuliner/handler"
@@ -6,6 +6,7 @@ import (
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
 	"TransKuliner/repository"
+	"TransKuliner/service"
 )
 
 type CategoryServiceImpl struct {
@@ -90,7 +91,7 @@ func (c *CategoryServiceImpl) Delete(id uint) string {
 	return "delete successfully"
 }
 
-func NewCategoryService(repository repository.CategoryRepository) CategoryService {
+func NewCategoryService(repository repository.CategoryRepository) service.CategoryService {
 	return &CategoryServiceImpl{
 		CategoryRepository: repository,
 	}
