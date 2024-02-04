@@ -1,8 +1,8 @@
-package impl
+package implController
 
 import (
 	"TransKuliner/controller"
-	"TransKuliner/handler"
+	"TransKuliner/halper"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
 	"TransKuliner/service"
@@ -18,7 +18,7 @@ func (c *CustomerControllerImpl) GetAll(ctx *fiber.Ctx) error {
 	customerResponses, err := c.CustomerService.FindAll()
 
 	if err != nil {
-		return handler.ErrorNotFound(err, ctx)
+		return halper.ErrorNotFound(err, ctx)
 	}
 
 	webResponse := response.WebResponse{
@@ -33,12 +33,12 @@ func (c *CustomerControllerImpl) GetById(ctx *fiber.Ctx) error {
 	paramsId, err := ctx.ParamsInt("id")
 
 	if err != nil {
-		return handler.ErrorNotFound(err, ctx)
+		return halper.ErrorNotFound(err, ctx)
 	}
 
 	customerResponse, errFind := c.CustomerService.FindById(uint(paramsId))
 	if errFind != nil {
-		return handler.ErrorNotFound(errFind, ctx)
+		return halper.ErrorNotFound(errFind, ctx)
 	}
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -51,7 +51,7 @@ func (c *CustomerControllerImpl) GetById(ctx *fiber.Ctx) error {
 func (c *CustomerControllerImpl) Create(ctx *fiber.Ctx) error {
 	var customerRequest request.CustomerRequest
 	err := ctx.BodyParser(&customerRequest)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	customerResponse := c.CustomerService.Create(customerRequest)
 
@@ -66,7 +66,7 @@ func (c *CustomerControllerImpl) Create(ctx *fiber.Ctx) error {
 func (c *CustomerControllerImpl) Update(ctx *fiber.Ctx) error {
 	var customerUpdateRequest request.CustomerUpdateRequest
 	err := ctx.BodyParser(&customerUpdateRequest)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	customerResponse := c.CustomerService.Update(customerUpdateRequest)
 	webResponse := response.WebResponse{
@@ -81,7 +81,7 @@ func (c *CustomerControllerImpl) Update(ctx *fiber.Ctx) error {
 func (c *CustomerControllerImpl) Delete(ctx *fiber.Ctx) error {
 	paramsId, err := ctx.ParamsInt("id")
 	if err != nil {
-		handler.ErrorNotFound(err, ctx)
+		halper.ErrorNotFound(err, ctx)
 	}
 
 	CustomerResponse := c.CustomerService.Delete(uint(paramsId))

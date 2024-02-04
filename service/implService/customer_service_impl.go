@@ -1,7 +1,7 @@
-package impl
+package implService
 
 import (
-	"TransKuliner/handler"
+	"TransKuliner/halper"
 	"TransKuliner/model/entity"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
@@ -62,7 +62,7 @@ func (c *CustomerServiceImpl) Create(request request.CustomerRequest) response.C
 		PhoneNumber: request.PhoneNumber,
 	}
 	save, err := c.CustomerRepository.Save(customer)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	customerResponse := response.CustomerResponse{
 		ID:          save.ID,
@@ -78,14 +78,14 @@ func (c *CustomerServiceImpl) Create(request request.CustomerRequest) response.C
 
 func (c *CustomerServiceImpl) Update(request request.CustomerUpdateRequest) response.CustomerResponse {
 	findById, err := c.CustomerRepository.FindById(request.ID)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	findById.Name = request.Name
 	findById.Email = request.Email
 	findById.PhoneNumber = request.PhoneNumber
 
 	save, err := c.CustomerRepository.Save(findById)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	customerResponse := response.CustomerResponse{
 		ID:          save.ID,
@@ -101,9 +101,9 @@ func (c *CustomerServiceImpl) Update(request request.CustomerUpdateRequest) resp
 
 func (c *CustomerServiceImpl) Delete(id uint) string {
 	findById, err := c.CustomerRepository.FindById(id)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 	err = c.CustomerRepository.Delete(findById)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	return "delete successfully"
 }

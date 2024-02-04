@@ -1,7 +1,7 @@
 package app
 
 import (
-	"TransKuliner/handler"
+	"TransKuliner/halper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -15,6 +15,6 @@ func NewConnectionMysql() *gorm.DB {
 	dsn := username + ":" + password + "@tcp" + "(" + host + ":" + port + ")" + "/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 	return db
 }

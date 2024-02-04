@@ -2,9 +2,9 @@ package main
 
 import (
 	"TransKuliner/app"
-	impl3 "TransKuliner/controller/impl"
-	"TransKuliner/repository/impl"
-	impl2 "TransKuliner/service/impl"
+	"TransKuliner/controller/implController"
+	"TransKuliner/repository/implRepository"
+	"TransKuliner/service/implService"
 )
 
 func main() {
@@ -15,19 +15,22 @@ func main() {
 	app.NewMigration(mysql)
 
 	// Repository
-	customerRepository := impl.NewCustomerRepository(mysql)
-	categoryRepository := impl.NewCategoryRepository(mysql)
-	productRepository := impl.NewProductRepository(mysql)
+	customerRepository := implRepository.NewCustomerRepository(mysql)
+	categoryRepository := implRepository.NewCategoryRepository(mysql)
+	productRepository := implRepository.NewProductRepository(mysql)
+	saleRepository := implRepository.NewSaleRepository(mysql)
+	implRepository.NewSaleDetailRepository(mysql)
 
 	// Service
-	customerService := impl2.NewCustomerService(customerRepository)
-	categoryService := impl2.NewCategoryService(categoryRepository)
-	productService := impl2.NewProductService(productRepository, categoryService)
+	customerService := implService.NewCustomerService(customerRepository)
+	categoryService := implService.NewCategoryService(categoryRepository)
+	productService := implService.NewProductService(productRepository, categoryService)
+	implService.NewSaleService(saleRepository, productService, customerService)
 
 	// Controller
-	customerController := impl3.NewCustomerController(customerService)
-	categoryController := impl3.NewCategoryController(categoryService)
-	productController := impl3.NewProductController(productService)
+	customerController := implController.NewCustomerController(customerService)
+	categoryController := implController.NewCategoryController(categoryService)
+	productController := implController.NewProductController(productService)
 
 	// Router
 	app.NewCustomerRouter(customerController)

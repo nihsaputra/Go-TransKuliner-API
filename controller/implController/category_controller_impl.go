@@ -1,8 +1,8 @@
-package impl
+package implController
 
 import (
 	"TransKuliner/controller"
-	"TransKuliner/handler"
+	"TransKuliner/halper"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
 	"TransKuliner/service"
@@ -27,7 +27,7 @@ func (c *CategoryControllerImpl) GetAll(ctx *fiber.Ctx) error {
 func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
 	paramsId, err := ctx.ParamsInt("id")
 	if err != nil {
-		handler.ErrorNotFound(err, ctx)
+		halper.ErrorNotFound(err, ctx)
 	}
 	categoryResponse := c.CategoryService.FindById(uint(paramsId))
 	webResponse := response.WebResponse{
@@ -41,7 +41,7 @@ func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
 func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 	var categoryRequest request.CategoryRequest
 	err := ctx.BodyParser(&categoryRequest)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	categoryResponse := c.CategoryService.Create(categoryRequest)
 	webResponse := response.WebResponse{
@@ -55,7 +55,7 @@ func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 func (c *CategoryControllerImpl) Update(ctx *fiber.Ctx) error {
 	var categoryUpdateRequest request.CategoryUpdateRequest
 	err := ctx.BodyParser(&categoryUpdateRequest)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	categoryResponse := c.CategoryService.Update(categoryUpdateRequest)
 	webResponse := response.WebResponse{
@@ -69,7 +69,7 @@ func (c *CategoryControllerImpl) Update(ctx *fiber.Ctx) error {
 func (c *CategoryControllerImpl) Delete(ctx *fiber.Ctx) error {
 	paramsId, err := ctx.ParamsInt("id")
 	if err != nil {
-		handler.ErrorNotFound(err, ctx)
+		halper.ErrorNotFound(err, ctx)
 	}
 	categoryResponse := c.CategoryService.Delete(uint(paramsId))
 

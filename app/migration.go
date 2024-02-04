@@ -1,7 +1,7 @@
 package app
 
 import (
-	"TransKuliner/handler"
+	"TransKuliner/halper"
 	"TransKuliner/model/entity"
 	"gorm.io/gorm"
 )
@@ -12,5 +12,5 @@ func NewMigration(db *gorm.DB) {
 		entity.Sale{}, entity.SaleDetail{},
 	)
 
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 }

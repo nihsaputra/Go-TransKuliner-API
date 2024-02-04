@@ -1,7 +1,7 @@
-package impl
+package implService
 
 import (
-	"TransKuliner/handler"
+	"TransKuliner/halper"
 	"TransKuliner/model/entity"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
@@ -17,17 +17,17 @@ type ProductServiceImpl struct {
 func (p *ProductServiceImpl) FindAll() []response.ProductResponse {
 	var productResponses []response.ProductResponse
 	findAll, err := p.ProductRepository.FindAll()
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	for _, product := range findAll {
 		productResponse := response.ProductResponse{
-			ID:           product.ID,
-			Name:         product.Name,
-			Price:        product.Price,
-			Stock:        product.Stock,
-			CategoryName: product.Category.Name,
-			CreatedAt:    product.CreatedAt,
-			UpdatedAt:    product.UpdatedAt,
+			ID:        product.ID,
+			Name:      product.Name,
+			Price:     product.Price,
+			Stock:     product.Stock,
+			Category:  halper.CategoryToCategorySomeResponse(product.Category),
+			CreatedAt: product.CreatedAt,
+			UpdatedAt: product.UpdatedAt,
 		}
 		productResponses = append(productResponses, productResponse)
 	}
@@ -37,16 +37,16 @@ func (p *ProductServiceImpl) FindAll() []response.ProductResponse {
 
 func (p *ProductServiceImpl) FindById(id uint) response.ProductResponse {
 	findById, err := p.ProductRepository.FindById(id)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	productResponse := response.ProductResponse{
-		ID:           findById.ID,
-		Name:         findById.Name,
-		Price:        findById.Price,
-		Stock:        findById.Stock,
-		CategoryName: findById.Category.Name,
-		CreatedAt:    findById.CreatedAt,
-		UpdatedAt:    findById.UpdatedAt,
+		ID:        findById.ID,
+		Name:      findById.Name,
+		Price:     findById.Price,
+		Stock:     findById.Stock,
+		Category:  halper.CategoryToCategorySomeResponse(findById.Category),
+		CreatedAt: findById.CreatedAt,
+		UpdatedAt: findById.UpdatedAt,
 	}
 
 	return productResponse
@@ -63,16 +63,16 @@ func (p *ProductServiceImpl) Create(request request.ProductRequest) response.Pro
 	}
 
 	save, err := p.ProductRepository.Save(product)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	productResponse := response.ProductResponse{
-		ID:           save.ID,
-		Name:         save.Name,
-		Price:        save.Price,
-		Stock:        save.Stock,
-		CategoryName: categoryResponse.Name,
-		CreatedAt:    save.CreatedAt,
-		UpdatedAt:    save.UpdatedAt,
+		ID:        save.ID,
+		Name:      save.Name,
+		Price:     save.Price,
+		Stock:     save.Stock,
+		Category:  halper.CategoryToCategorySomeResponse(save.Category),
+		CreatedAt: save.CreatedAt,
+		UpdatedAt: save.UpdatedAt,
 	}
 
 	return productResponse
@@ -80,7 +80,7 @@ func (p *ProductServiceImpl) Create(request request.ProductRequest) response.Pro
 
 func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) response.ProductResponse {
 	findById, err := p.ProductRepository.FindById(request.ID)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	categoryResponse := p.CategoryService.FindById(request.CategoryID)
 
@@ -90,16 +90,16 @@ func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) respon
 	findById.CategoryID = categoryResponse.ID
 
 	save, err := p.ProductRepository.Save(findById)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	productResponse := response.ProductResponse{
-		ID:           save.ID,
-		Name:         save.Name,
-		Price:        save.Price,
-		Stock:        save.Stock,
-		CategoryName: categoryResponse.Name,
-		CreatedAt:    save.CreatedAt,
-		UpdatedAt:    save.UpdatedAt,
+		ID:        save.ID,
+		Name:      save.Name,
+		Price:     save.Price,
+		Stock:     save.Stock,
+		Category:  halper.CategoryToCategorySomeResponse(save.Category),
+		CreatedAt: save.CreatedAt,
+		UpdatedAt: save.UpdatedAt,
 	}
 
 	return productResponse
@@ -107,9 +107,9 @@ func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) respon
 
 func (p *ProductServiceImpl) Delete(id uint) string {
 	findById, err := p.ProductRepository.FindById(id)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 	err = p.ProductRepository.Delete(findById)
-	handler.PanicIfError(err)
+	halper.PanicIfError(err)
 
 	return "delete successfully"
 }
