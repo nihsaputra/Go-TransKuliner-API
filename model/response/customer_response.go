@@ -12,8 +12,6 @@ type CustomerResponse struct {
 }
 
 type CustomerSomeResponse struct {
-	ID          uint   `json:"customer_id"`
-	Name        string `json:"name"`
-	Email       string `json:"email"`
-	PhoneNumber string `json:"phone_number"`
+	ID   uint   `json:"customer_id"`
+	Name string `json:"name"`
 }

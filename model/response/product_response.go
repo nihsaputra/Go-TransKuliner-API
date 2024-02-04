@@ -12,9 +12,7 @@ type ProductResponse struct {
 	UpdatedAt time.Time            `json:"updated_at"`
 }
 type ProductSomeResponse struct {
-	ID       uint                 `json:"product_id"`
-	Name     string               `json:"name"`
-	Price    uint                 `json:"price"`
-	Stock    uint                 `json:"stock"`
-	Category CategorySomeResponse `json:"category"`
+	ID    uint   `json:"product_id"`
+	Name  string `json:"name"`
+	Price uint   `json:"price"`
 }

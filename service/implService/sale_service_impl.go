@@ -63,8 +63,8 @@ func (s *SaleServiceImpl) Create(request request.SaleRequest) response.SaleRespo
 
 	saleResponse := response.SaleResponse{
 		ID:        save.ID,
-		Product:   halper.ProductToProductSomeResponse(save.Product),
-		Customer:  halper.CustomerToCustomerSomeResonse(save.Customer),
+		Product:   halper.ProductResponseToProductSomeResponse(productResponse),
+		Customer:  halper.CustomerResponseToCustomerSomeResonse(customerResponse),
 		CreatedAt: save.CreatedAt,
 	}
 
