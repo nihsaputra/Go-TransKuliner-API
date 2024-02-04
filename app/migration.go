@@ -7,6 +7,10 @@ import (
 )
 
 func NewMigration(db *gorm.DB) {
-	err := db.AutoMigrate(entity.Category{}, entity.Product{}, entity.Customer{})
+	err := db.AutoMigrate(
+		entity.Category{}, entity.Product{}, entity.Customer{},
+		entity.Sale{}, entity.SaleDetail{},
+	)
+
 	handler.PanicIfError(err)
 }
