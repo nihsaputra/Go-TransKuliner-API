@@ -13,7 +13,7 @@ type CustomerServiceImpl struct {
 	CustomerRepository repository.CustomerRepository
 }
 
-func (c *CustomerServiceImpl) FindAll() ([]response.CustomerResponse, error) {
+func (c *CustomerServiceImpl) GetAll() ([]response.CustomerResponse, error) {
 	var customerResponses []response.CustomerResponse
 	findAll, err := c.CustomerRepository.FindAll()
 
@@ -36,7 +36,7 @@ func (c *CustomerServiceImpl) FindAll() ([]response.CustomerResponse, error) {
 	return customerResponses, nil
 }
 
-func (c *CustomerServiceImpl) FindById(id uint) (response.CustomerResponse, error) {
+func (c *CustomerServiceImpl) GetById(id uint) (response.CustomerResponse, error) {
 	findById, err := c.CustomerRepository.FindById(id)
 
 	if err != nil {

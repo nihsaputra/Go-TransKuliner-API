@@ -14,7 +14,7 @@ type ProductServiceImpl struct {
 	CategoryService   service.CategoryService
 }
 
-func (p *ProductServiceImpl) FindAll() []response.ProductResponse {
+func (p *ProductServiceImpl) GetAll() []response.ProductResponse {
 	var productResponses []response.ProductResponse
 	findAll, err := p.ProductRepository.FindAll()
 	halper.PanicIfError(err)
@@ -35,7 +35,7 @@ func (p *ProductServiceImpl) FindAll() []response.ProductResponse {
 	return productResponses
 }
 
-func (p *ProductServiceImpl) FindById(id uint) response.ProductResponse {
+func (p *ProductServiceImpl) GetById(id uint) response.ProductResponse {
 	findById, err := p.ProductRepository.FindById(id)
 	halper.PanicIfError(err)
 
@@ -53,7 +53,7 @@ func (p *ProductServiceImpl) FindById(id uint) response.ProductResponse {
 }
 
 func (p *ProductServiceImpl) Create(request request.ProductRequest) response.ProductResponse {
-	categoryResponse := p.CategoryService.FindById(request.CategoryID)
+	categoryResponse := p.CategoryService.GetById(request.CategoryID)
 
 	product := entity.Product{
 		Name:       request.Name,
@@ -82,7 +82,7 @@ func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) respon
 	findById, err := p.ProductRepository.FindById(request.ID)
 	halper.PanicIfError(err)
 
-	categoryResponse := p.CategoryService.FindById(request.CategoryID)
+	categoryResponse := p.CategoryService.GetById(request.CategoryID)
 
 	findById.Name = request.Name
 	findById.Price = request.Price

@@ -11,25 +11,27 @@ import (
 )
 
 type SaleServiceImpl struct {
-	SaleRepository  repository.SaleRepository
-	ProductService  service.ProductService
-	CustomerService service.CustomerService
+	SaleRepository    repository.SaleRepository
+	ProductService    service.ProductService
+	CustomerService   service.CustomerService
+	SaleDetailService service.SaleDetailService
 }
 
 func (s *SaleServiceImpl) GetAll() []response.SaleResponse {
-	var saleResponses []response.SaleResponse
 	sales, errFindAllSale := s.SaleRepository.FindAll()
 	halper.PanicIfError(errFindAllSale)
 
+	var saleResponses []response.SaleResponse
 	for _, sale := range sales {
 		saleResponse := response.SaleResponse{
-			ID:        sale.ID,
-			Product:   halper.ProductToProductSomeResponse(sale.Product),
-			Customer:  halper.CustomerToCustomerSomeResonse(sale.Customer),
-			CreatedAt: sale.CreatedAt,
+			ID:                 sale.ID,
+			CreatedAt:          sale.CreatedAt,
+			CustomerName:       sale.Customer.Name,
+			SaleDetailResponse: halper.SaleDetailToSaleDetailResponse(sale.SaleDetail),
 		}
 		saleResponses = append(saleResponses, saleResponse)
 	}
+
 	return saleResponses
 }
 
@@ -38,43 +40,50 @@ func (s *SaleServiceImpl) GetById(id uint) response.SaleResponse {
 	halper.PanicIfError(errFindByIdSale)
 
 	saleResponse := response.SaleResponse{
-		ID:        sale.ID,
-		Product:   halper.ProductToProductSomeResponse(sale.Product),
-		Customer:  halper.CustomerToCustomerSomeResonse(sale.Customer),
-		CreatedAt: sale.CreatedAt,
+		ID:                 sale.ID,
+		CustomerName:       sale.Customer.Name,
+		CreatedAt:          sale.CreatedAt,
+		SaleDetailResponse: halper.SaleDetailToSaleDetailResponse(sale.SaleDetail),
 	}
 
 	return saleResponse
 }
 
-func (s *SaleServiceImpl) Create(request request.SaleRequest) response.SaleResponse {
-	productResponse := s.ProductService.FindById(request.ProductId)
-	customerResponse, errFindCustomer := s.CustomerService.FindById(request.CustomerId)
+func (s *SaleServiceImpl) Create(saleRequest request.SaleRequest) response.SaleResponse {
+	customerResponse, errFindCustomer := s.CustomerService.GetById(saleRequest.CustomerId)
 	halper.PanicIfError(errFindCustomer)
 
 	sale := entity.Sale{
-		ProductId:  productResponse.ID,
 		CustomerId: customerResponse.ID,
 		CreatedAt:  time.Now(),
 	}
-
 	save, errSave := s.SaleRepository.Save(sale)
 	halper.PanicIfError(errSave)
 
-	saleResponse := response.SaleResponse{
-		ID:        save.ID,
-		Product:   halper.ProductResponseToProductSomeResponse(productResponse),
-		Customer:  halper.CustomerResponseToCustomerSomeResonse(customerResponse),
-		CreatedAt: save.CreatedAt,
+	var purchaseList []response.SaleDetailResponse
+	for _, saleProduct := range saleRequest.Product {
+		saleDetailRequest := request.SaleDetailRequest{
+			SaleId:    save.ID,
+			ProductId: saleProduct.ProductId,
+			Quantity:  saleProduct.Quantity,
+		}
+		saleDetailCreateResponse := s.SaleDetailService.Create(saleDetailRequest)
+		purchaseList = append(purchaseList, saleDetailCreateResponse)
 	}
 
-	return saleResponse
+	saleCreateResponse := response.SaleResponse{
+		ID:                 save.ID,
+		CustomerName:       customerResponse.Name,
+		SaleDetailResponse: purchaseList,
+	}
+
+	return saleCreateResponse
 }
 
-func NewSaleService(repository repository.SaleRepository, productService service.ProductService, customerService service.CustomerService) service.SaleService {
+func NewSaleService(repository repository.SaleRepository, customerService service.CustomerService, saleDetailService service.SaleDetailService) service.SaleService {
 	return &SaleServiceImpl{
-		SaleRepository:  repository,
-		ProductService:  productService,
-		CustomerService: customerService,
+		SaleRepository:    repository,
+		CustomerService:   customerService,
+		SaleDetailService: saleDetailService,
 	}
 }

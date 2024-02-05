@@ -15,7 +15,7 @@ type ProductControllerImpl struct {
 }
 
 func (p *ProductControllerImpl) GetAll(ctx *fiber.Ctx) error {
-	productResponses := p.ProductService.FindAll()
+	productResponses := p.ProductService.GetAll()
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -32,7 +32,7 @@ func (p *ProductControllerImpl) GetById(ctx *fiber.Ctx) error {
 		return halper.ErrorNotFound(err, ctx)
 	}
 
-	productResponse := p.ProductService.FindById(uint(paramsId))
+	productResponse := p.ProductService.GetById(uint(paramsId))
 
 	webResponse := response.WebResponse{
 		Code:   200,

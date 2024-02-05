@@ -6,7 +6,5 @@ import (
 )
 
 type SaleDetailService interface {
-	GetAll() []response.SaleDetailResponse
-	GetById(id uint) response.SaleDetailResponse
 	Create(request request.SaleDetailRequest) response.SaleDetailResponse
 }

@@ -15,7 +15,7 @@ type CategoryControllerImpl struct {
 }
 
 func (c *CategoryControllerImpl) GetAll(ctx *fiber.Ctx) error {
-	categoryResponses := c.CategoryService.FindAll()
+	categoryResponses := c.CategoryService.GetAll()
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
@@ -29,7 +29,7 @@ func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
 	if err != nil {
 		halper.ErrorNotFound(err, ctx)
 	}
-	categoryResponse := c.CategoryService.FindById(uint(paramsId))
+	categoryResponse := c.CategoryService.GetById(uint(paramsId))
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",

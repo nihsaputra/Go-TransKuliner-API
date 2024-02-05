@@ -13,7 +13,7 @@ type CategoryServiceImpl struct {
 	CategoryRepository repository.CategoryRepository
 }
 
-func (c *CategoryServiceImpl) FindAll() []response.CategoryResponse {
+func (c *CategoryServiceImpl) GetAll() []response.CategoryResponse {
 	var categoryResponses []response.CategoryResponse
 	findAll, err := c.CategoryRepository.FindAll()
 	halper.PanicIfError(err)
@@ -31,7 +31,7 @@ func (c *CategoryServiceImpl) FindAll() []response.CategoryResponse {
 	return categoryResponses
 }
 
-func (c *CategoryServiceImpl) FindById(id uint) response.CategoryResponse {
+func (c *CategoryServiceImpl) GetById(id uint) response.CategoryResponse {
 	byId, err := c.CategoryRepository.FindById(id)
 	halper.PanicIfError(err)
 

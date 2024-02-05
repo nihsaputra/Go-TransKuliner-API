@@ -36,9 +36,3 @@ func NewSaleRouter(saleController controller.SaleController) {
 	Router.Get("/sales/:id", saleController.GetById)
 	Router.Post("/sales", saleController.Create)
 }
-
-func NewSaleDetailRouter(saleDetailController controller.SaleDetailController) {
-	Router.Get("/sale-details", saleDetailController.GetAll)
-	Router.Get("/sale-details/:id", saleDetailController.GetById)
-	Router.Post("/sale-details", saleDetailController.Create)
-}

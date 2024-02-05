@@ -10,18 +10,6 @@ type SaleDetailRepositoryImpl struct {
 	Db *gorm.DB
 }
 
-func (s *SaleDetailRepositoryImpl) FindAll() ([]entity.SaleDetail, error) {
-	var saleDetails []entity.SaleDetail
-	tx := s.Db.Preload("Sale").Find(&saleDetails)
-	return saleDetails, tx.Error
-}
-
-func (s *SaleDetailRepositoryImpl) FindById(id uint) (entity.SaleDetail, error) {
-	var saleDetail entity.SaleDetail
-	tx := s.Db.Preload("Sale").First(&saleDetail, id)
-	return saleDetail, tx.Error
-}
-
 func (s *SaleDetailRepositoryImpl) Save(detail entity.SaleDetail) (entity.SaleDetail, error) {
 	tx := s.Db.Save(&detail)
 	return detail, tx.Error

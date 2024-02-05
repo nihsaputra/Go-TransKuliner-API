@@ -15,7 +15,7 @@ type CustomerControllerImpl struct {
 }
 
 func (c *CustomerControllerImpl) GetAll(ctx *fiber.Ctx) error {
-	customerResponses, err := c.CustomerService.FindAll()
+	customerResponses, err := c.CustomerService.GetAll()
 
 	if err != nil {
 		return halper.ErrorNotFound(err, ctx)
@@ -36,7 +36,7 @@ func (c *CustomerControllerImpl) GetById(ctx *fiber.Ctx) error {
 		return halper.ErrorNotFound(err, ctx)
 	}
 
-	customerResponse, errFind := c.CustomerService.FindById(uint(paramsId))
+	customerResponse, errFind := c.CustomerService.GetById(uint(paramsId))
 	if errFind != nil {
 		return halper.ErrorNotFound(errFind, ctx)
 	}

@@ -12,66 +12,34 @@ import (
 type SaleDetailServiceImpl struct {
 	SaleDetailRepository repository.SaleDetailRepository
 	SaleService          service.SaleService
-}
-
-func (s *SaleDetailServiceImpl) GetAll() []response.SaleDetailResponse {
-	var saleDetailResponses []response.SaleDetailResponse
-	saleDetails, err := s.SaleDetailRepository.FindAll()
-	halper.PanicIfError(err)
-
-	for _, saleDetail := range saleDetails {
-		saleDetailResponse := response.SaleDetailResponse{
-			ID:         saleDetail.ID,
-			Sale:       halper.SaleToSaleResponse(saleDetail.Sale),
-			Quantity:   saleDetail.Quantity,
-			Price:      saleDetail.Price,
-			TotalPrice: saleDetail.Quantity * saleDetail.Price,
-		}
-		saleDetailResponses = append(saleDetailResponses, saleDetailResponse)
-	}
-	return saleDetailResponses
-}
-
-func (s *SaleDetailServiceImpl) GetById(id uint) response.SaleDetailResponse {
-	saleDetail, err := s.SaleDetailRepository.FindById(id)
-	halper.PanicIfError(err)
-
-	detailResponse := response.SaleDetailResponse{
-		ID:         saleDetail.ID,
-		Sale:       halper.SaleToSaleResponse(saleDetail.Sale),
-		Quantity:   saleDetail.Quantity,
-		Price:      saleDetail.Price,
-		TotalPrice: saleDetail.Quantity * saleDetail.Price,
-	}
-
-	return detailResponse
+	ProductService       service.ProductService
 }
 
 func (s *SaleDetailServiceImpl) Create(request request.SaleDetailRequest) response.SaleDetailResponse {
-	saleResponse := s.SaleService.GetById(request.SaleId)
+	productResponse := s.ProductService.GetById(request.ProductId)
 
 	saleDetail := entity.SaleDetail{
-		SaleId:   saleResponse.ID,
-		Quantity: request.Quantity,
-		Price:    request.Price,
+		SaleId:    request.SaleId,
+		ProductId: productResponse.ID,
+		Quantity:  request.Quantity,
+		Price:     productResponse.Price,
 	}
 	saveSaleDetail, err := s.SaleDetailRepository.Save(saleDetail)
 	halper.PanicIfError(err)
 
-	saleDetailResponse := response.SaleDetailResponse{
-		ID:         saveSaleDetail.ID,
-		Sale:       saleResponse,
+	saleDetailCreateResponse := response.SaleDetailResponse{
+		Product:    productResponse.Name,
+		Category:   productResponse.Category.Name,
 		Price:      saveSaleDetail.Price,
 		Quantity:   saveSaleDetail.Quantity,
 		TotalPrice: saveSaleDetail.Price * saveSaleDetail.Quantity,
 	}
-
-	return saleDetailResponse
+	return saleDetailCreateResponse
 }
 
-func NewSaleDetailService(repository repository.SaleDetailRepository, saleService service.SaleService) service.SaleDetailService {
+func NewSaleDetailService(repository repository.SaleDetailRepository, productService service.ProductService) service.SaleDetailService {
 	return &SaleDetailServiceImpl{
 		SaleDetailRepository: repository,
-		SaleService:          saleService,
+		ProductService:       productService,
 	}
 }
