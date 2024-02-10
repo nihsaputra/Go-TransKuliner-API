@@ -12,14 +12,14 @@ type CategoryRepositoryImpl struct {
 
 func (c *CategoryRepositoryImpl) FindAll() ([]entity.Category, error) {
 	var categories []entity.Category
-	tx := c.Db.Find(&categories)
-	return categories, tx.Error
+	err := c.Db.Find(&categories).Error
+	return categories, err
 }
 
 func (c *CategoryRepositoryImpl) FindById(id uint) (entity.Category, error) {
 	var category entity.Category
-	tx := c.Db.First(&category, id)
-	return category, tx.Error
+	err := c.Db.First(&category, id).Error
+	return category, err
 }
 
 func (c *CategoryRepositoryImpl) Save(category entity.Category) (entity.Category, error) {

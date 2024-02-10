@@ -14,3 +14,8 @@ type ProductUpdateRequest struct {
 	Stock      uint   `json:"stock"`
 	CategoryID uint   `json:"category_id"`
 }
+
+type ProductUpdateStockRequest struct {
+	ID    uint `json:"id"`
+	Stock uint `json:"stock"`
+}

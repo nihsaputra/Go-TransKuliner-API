@@ -7,6 +7,7 @@ import (
 	"TransKuliner/model/response"
 	"TransKuliner/repository"
 	"TransKuliner/service"
+	"errors"
 )
 
 type SaleDetailServiceImpl struct {
@@ -15,17 +16,31 @@ type SaleDetailServiceImpl struct {
 	ProductService       service.ProductService
 }
 
-func (s *SaleDetailServiceImpl) Create(request request.SaleDetailRequest) response.SaleDetailResponse {
-	productResponse := s.ProductService.GetById(request.ProductId)
+func (s *SaleDetailServiceImpl) Create(saleDetailRequest request.SaleDetailRequest) response.SaleDetailResponse {
+	productResponse := s.ProductService.GetById(saleDetailRequest.ProductId)
+
+	if productResponse.Stock < saleDetailRequest.Quantity {
+		err := errors.New("stock kurang")
+		halper.PanicIfError(err)
+	}
 
 	saleDetail := entity.SaleDetail{
-		SaleId:    request.SaleId,
+		SaleId:    saleDetailRequest.SaleId,
 		ProductId: productResponse.ID,
-		Quantity:  request.Quantity,
+		Quantity:  saleDetailRequest.Quantity,
 		Price:     productResponse.Price,
 	}
 	saveSaleDetail, err := s.SaleDetailRepository.Save(saleDetail)
 	halper.PanicIfError(err)
+
+	updateRequest := request.ProductUpdateRequest{
+		ID:         productResponse.ID,
+		Name:       productResponse.Name,
+		Price:      productResponse.Price,
+		Stock:      productResponse.Stock - saleDetail.Quantity,
+		CategoryID: productResponse.Category.ID,
+	}
+	s.ProductService.Update(updateRequest)
 
 	saleDetailCreateResponse := response.SaleDetailResponse{
 		Product:    productResponse.Name,
@@ -35,6 +50,7 @@ func (s *SaleDetailServiceImpl) Create(request request.SaleDetailRequest) respon
 		TotalPrice: saveSaleDetail.Price * saveSaleDetail.Quantity,
 	}
 	return saleDetailCreateResponse
+
 }
 
 func NewSaleDetailService(repository repository.SaleDetailRepository, productService service.ProductService) service.SaleDetailService {

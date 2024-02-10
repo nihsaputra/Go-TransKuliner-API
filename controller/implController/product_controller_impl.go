@@ -16,6 +16,7 @@ type ProductControllerImpl struct {
 
 func (p *ProductControllerImpl) GetAll(ctx *fiber.Ctx) error {
 	productResponses := p.ProductService.GetAll()
+	// belum di validasi 500
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -27,12 +28,11 @@ func (p *ProductControllerImpl) GetAll(ctx *fiber.Ctx) error {
 }
 
 func (p *ProductControllerImpl) GetById(ctx *fiber.Ctx) error {
-	paramsId, err := ctx.ParamsInt("id")
-	if err != nil {
-		return halper.ErrorNotFound(err, ctx)
-	}
+	paramsId, _ := ctx.ParamsInt("id")
+	// belum di validasi 404
 
 	productResponse := p.ProductService.GetById(uint(paramsId))
+	// belum di validasi 404
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -47,8 +47,10 @@ func (p *ProductControllerImpl) Create(ctx *fiber.Ctx) error {
 	var productRequest request.ProductRequest
 	err := ctx.BodyParser(&productRequest)
 	halper.PanicIfError(err)
+	// belum di validasi 404
 
 	productResponse := p.ProductService.Create(productRequest)
+	// belum di validasi 404
 
 	webResponse := response.WebResponse{
 		Code:   201,
@@ -63,8 +65,11 @@ func (p *ProductControllerImpl) Update(ctx *fiber.Ctx) error {
 	var productUpdateRequest request.ProductUpdateRequest
 	err := ctx.BodyParser(&productUpdateRequest)
 	halper.PanicIfError(err)
+	// belum di validasi 404
 
 	productResponse := p.ProductService.Update(productUpdateRequest)
+	// belum di validasi 404
+
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
@@ -75,12 +80,12 @@ func (p *ProductControllerImpl) Update(ctx *fiber.Ctx) error {
 }
 
 func (p *ProductControllerImpl) Delete(ctx *fiber.Ctx) error {
-	paramsId, err := ctx.ParamsInt("id")
-	if err != nil {
-		halper.ErrorNotFound(err, ctx)
-	}
+	paramsId, _ := ctx.ParamsInt("id")
+	// belum di validasi 404
 
 	productResponse := p.ProductService.Delete(uint(paramsId))
+	// belum di validasi 404
+
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
