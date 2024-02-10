@@ -2,13 +2,16 @@ package implController
 
 import (
 	"TransKuliner/controller"
-	"TransKuliner/halper"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
 	"TransKuliner/service"
+	"fmt"
+	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"net/http"
 )
+
+var validate *validator.Validate
 
 type CategoryControllerImpl struct {
 	CategoryService service.CategoryService
@@ -16,7 +19,6 @@ type CategoryControllerImpl struct {
 
 func (c *CategoryControllerImpl) GetAll(ctx *fiber.Ctx) error {
 	categoryResponses := c.CategoryService.GetAll()
-	// belum di validasi 500
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -27,11 +29,27 @@ func (c *CategoryControllerImpl) GetAll(ctx *fiber.Ctx) error {
 }
 
 func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
-	paramsId, _ := ctx.ParamsInt("id")
-	// belum di validasi 404
+	paramsId, err := ctx.ParamsInt("id")
+	// validasi paramsId
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	categoryResponse := c.CategoryService.GetById(uint(paramsId))
-	// belum di validasi 404
+	categoryResponse, err := c.CategoryService.GetById(uint(paramsId))
+	// validasi findById
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusNotFound).JSON(response.ErrorResponse{
+			Code:    404,
+			Status:  "NOT_FOUND",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -44,11 +62,43 @@ func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
 func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 	var categoryRequest request.CategoryRequest
 	err := ctx.BodyParser(&categoryRequest)
-	halper.PanicIfError(err)
-	// belum di validasi 404
+	// validation bodyParser request
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	categoryResponse := c.CategoryService.Create(categoryRequest)
-	// belum di validasi 404
+	// Validation Request
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err = validate.Struct(categoryRequest)
+	if err != nil {
+		var messages []string
+		for _, e := range err.(validator.ValidationErrors) {
+			sprintf := fmt.Sprintf("Error field: %s, on condition: %s", e.Field(), e.ActualTag())
+			messages = append(messages, sprintf)
+		}
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: messages,
+		})
+	}
+
+	categoryResponse, err := c.CategoryService.Create(categoryRequest)
+	// validasi create
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   201,
@@ -60,12 +110,35 @@ func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 
 func (c *CategoryControllerImpl) Update(ctx *fiber.Ctx) error {
 	var categoryUpdateRequest request.CategoryUpdateRequest
-	err := ctx.BodyParser(&categoryUpdateRequest)
-	halper.PanicIfError(err)
-	// belum di validasi 404
+	ctx.BodyParser(&categoryUpdateRequest)
 
-	categoryResponse := c.CategoryService.Update(categoryUpdateRequest)
-	// belum di validasi 404
+	// Validation Request
+	validate := validator.New(validator.WithRequiredStructEnabled())
+	err := validate.Struct(categoryUpdateRequest)
+	if err != nil {
+		var messages []string
+		for _, e := range err.(validator.ValidationErrors) {
+			sprintf := fmt.Sprintf("Error field: %s, on condition: %s", e.Field(), e.ActualTag())
+			messages = append(messages, sprintf)
+		}
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: messages,
+		})
+	}
+
+	categoryResponse, err := c.CategoryService.Update(categoryUpdateRequest)
+	// validasi update
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -76,16 +149,32 @@ func (c *CategoryControllerImpl) Update(ctx *fiber.Ctx) error {
 }
 
 func (c *CategoryControllerImpl) Delete(ctx *fiber.Ctx) error {
-	paramsId, _ := ctx.ParamsInt("id")
-	// belum di validasi 404
+	paramsId, err := ctx.ParamsInt("id")
+	// validasi paramsId
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	categoryResponse := c.CategoryService.Delete(uint(paramsId))
-	// belum di validasi 404
+	err = c.CategoryService.Delete(uint(paramsId))
+	// validasi delete
+	if err != nil {
+		// belum di handle jenis errornya
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
-		Data:   categoryResponse,
+		Data:   "successfully delete categories",
 	}
 	return ctx.Status(http.StatusOK).JSON(webResponse)
 }

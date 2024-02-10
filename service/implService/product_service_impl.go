@@ -53,7 +53,7 @@ func (p *ProductServiceImpl) GetById(id uint) response.ProductResponse {
 }
 
 func (p *ProductServiceImpl) Create(request request.ProductRequest) response.ProductResponse {
-	categoryResponse := p.CategoryService.GetById(request.CategoryID)
+	categoryResponse, _ := p.CategoryService.GetById(request.CategoryID)
 
 	product := entity.Product{
 		Name:       request.Name,
@@ -82,7 +82,7 @@ func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) respon
 	findById, err := p.ProductRepository.FindById(request.ID)
 	halper.PanicIfError(err)
 
-	categoryResponse := p.CategoryService.GetById(request.CategoryID)
+	categoryResponse, _ := p.CategoryService.GetById(request.CategoryID)
 
 	findById.Name = request.Name
 	findById.Price = request.Price

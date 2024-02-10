@@ -7,8 +7,8 @@ import (
 
 type CategoryService interface {
 	GetAll() []response.CategoryResponse
-	GetById(id uint) response.CategoryResponse
-	Create(request request.CategoryRequest) response.CategoryResponse
-	Update(request request.CategoryUpdateRequest) response.CategoryResponse
-	Delete(id uint) string
+	GetById(id uint) (response.CategoryResponse, error)
+	Create(request request.CategoryRequest) (response.CategoryResponse, error)
+	Update(request request.CategoryUpdateRequest) (response.CategoryResponse, error)
+	Delete(id uint) error
 }

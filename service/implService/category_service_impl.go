@@ -31,9 +31,11 @@ func (c *CategoryServiceImpl) GetAll() []response.CategoryResponse {
 	return categoryResponses
 }
 
-func (c *CategoryServiceImpl) GetById(id uint) response.CategoryResponse {
+func (c *CategoryServiceImpl) GetById(id uint) (response.CategoryResponse, error) {
 	byId, err := c.CategoryRepository.FindById(id)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.CategoryResponse{}, err
+	}
 
 	categoryResponse := response.CategoryResponse{
 		ID:        byId.ID,
@@ -42,16 +44,18 @@ func (c *CategoryServiceImpl) GetById(id uint) response.CategoryResponse {
 		UpdatedAt: byId.UpdatedAt,
 	}
 
-	return categoryResponse
+	return categoryResponse, nil
 }
 
-func (c *CategoryServiceImpl) Create(request request.CategoryRequest) response.CategoryResponse {
+func (c *CategoryServiceImpl) Create(request request.CategoryRequest) (response.CategoryResponse, error) {
 	category := entity.Category{
 		Name: request.Name,
 	}
 
 	save, err := c.CategoryRepository.Save(category)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.CategoryResponse{}, err
+	}
 
 	categoryResponse := response.CategoryResponse{
 		ID:        save.ID,
@@ -60,16 +64,20 @@ func (c *CategoryServiceImpl) Create(request request.CategoryRequest) response.C
 		UpdatedAt: save.UpdatedAt,
 	}
 
-	return categoryResponse
+	return categoryResponse, nil
 }
 
-func (c *CategoryServiceImpl) Update(request request.CategoryUpdateRequest) response.CategoryResponse {
+func (c *CategoryServiceImpl) Update(request request.CategoryUpdateRequest) (response.CategoryResponse, error) {
 	findById, err := c.CategoryRepository.FindById(request.ID)
-	halper.PanicIfError(err)
-	findById.Name = request.Name
+	if err != nil {
+		return response.CategoryResponse{}, err
+	}
 
+	findById.Name = request.Name
 	save, err := c.CategoryRepository.Save(findById)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.CategoryResponse{}, err
+	}
 
 	categoryResponse := response.CategoryResponse{
 		ID:        save.ID,
@@ -77,18 +85,17 @@ func (c *CategoryServiceImpl) Update(request request.CategoryUpdateRequest) resp
 		CreatedAt: save.CreatedAt,
 		UpdatedAt: save.UpdatedAt,
 	}
-
-	return categoryResponse
+	return categoryResponse, nil
 }
 
-func (c *CategoryServiceImpl) Delete(id uint) string {
+func (c *CategoryServiceImpl) Delete(id uint) error {
 	findById, err := c.CategoryRepository.FindById(id)
-	halper.PanicIfError(err)
+	if err != nil {
+		return err
+	}
 
 	err = c.CategoryRepository.Delete(findById)
-	halper.PanicIfError(err)
-
-	return "delete successfully"
+	return err
 }
 
 func NewCategoryService(repository repository.CategoryRepository) service.CategoryService {
