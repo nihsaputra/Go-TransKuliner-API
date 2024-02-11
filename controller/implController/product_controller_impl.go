@@ -2,7 +2,6 @@ package implController
 
 import (
 	"TransKuliner/controller"
-	"TransKuliner/halper"
 	"TransKuliner/model/request"
 	"TransKuliner/model/response"
 	"TransKuliner/service"
@@ -16,23 +15,34 @@ type ProductControllerImpl struct {
 
 func (p *ProductControllerImpl) GetAll(ctx *fiber.Ctx) error {
 	productResponses := p.ProductService.GetAll()
-	// belum di validasi 500
 
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   productResponses,
 	}
-
 	return ctx.Status(http.StatusOK).JSON(webResponse)
 }
 
 func (p *ProductControllerImpl) GetById(ctx *fiber.Ctx) error {
-	paramsId, _ := ctx.ParamsInt("id")
-	// belum di validasi 404
+	paramsId, err := ctx.ParamsInt("id")
+	// validasi paramsId
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	productResponse := p.ProductService.GetById(uint(paramsId))
-	// belum di validasi 404
+	productResponse, err := p.ProductService.GetById(uint(paramsId))
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -46,11 +56,23 @@ func (p *ProductControllerImpl) GetById(ctx *fiber.Ctx) error {
 func (p *ProductControllerImpl) Create(ctx *fiber.Ctx) error {
 	var productRequest request.ProductRequest
 	err := ctx.BodyParser(&productRequest)
-	halper.PanicIfError(err)
-	// belum di validasi 404
+	// validasi bodyParser
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	productResponse := p.ProductService.Create(productRequest)
-	// belum di validasi 404
+	productResponse, err := p.ProductService.Create(productRequest)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   201,
@@ -64,11 +86,23 @@ func (p *ProductControllerImpl) Create(ctx *fiber.Ctx) error {
 func (p *ProductControllerImpl) Update(ctx *fiber.Ctx) error {
 	var productUpdateRequest request.ProductUpdateRequest
 	err := ctx.BodyParser(&productUpdateRequest)
-	halper.PanicIfError(err)
-	// belum di validasi 404
+	// validasi bodyParser
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	productResponse := p.ProductService.Update(productUpdateRequest)
-	// belum di validasi 404
+	productResponse, err := p.ProductService.Update(productUpdateRequest)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   200,
@@ -80,16 +114,29 @@ func (p *ProductControllerImpl) Update(ctx *fiber.Ctx) error {
 }
 
 func (p *ProductControllerImpl) Delete(ctx *fiber.Ctx) error {
-	paramsId, _ := ctx.ParamsInt("id")
-	// belum di validasi 404
+	paramsId, err := ctx.ParamsInt("id")
+	// validasi paramsId
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
-	productResponse := p.ProductService.Delete(uint(paramsId))
-	// belum di validasi 404
+	err = p.ProductService.Delete(uint(paramsId))
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
+			Code:    400,
+			Status:  "BAD_REQUEST",
+			Message: err.Error(),
+		})
+	}
 
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
-		Data:   productResponse,
+		Data:   "successfully delete",
 	}
 	return ctx.Status(http.StatusOK).JSON(webResponse)
 }

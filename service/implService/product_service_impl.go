@@ -35,9 +35,11 @@ func (p *ProductServiceImpl) GetAll() []response.ProductResponse {
 	return productResponses
 }
 
-func (p *ProductServiceImpl) GetById(id uint) response.ProductResponse {
+func (p *ProductServiceImpl) GetById(id uint) (response.ProductResponse, error) {
 	findById, err := p.ProductRepository.FindById(id)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.ProductResponse{}, err
+	}
 
 	productResponse := response.ProductResponse{
 		ID:        findById.ID,
@@ -49,11 +51,14 @@ func (p *ProductServiceImpl) GetById(id uint) response.ProductResponse {
 		UpdatedAt: findById.UpdatedAt,
 	}
 
-	return productResponse
+	return productResponse, nil
 }
 
-func (p *ProductServiceImpl) Create(request request.ProductRequest) response.ProductResponse {
-	categoryResponse, _ := p.CategoryService.GetById(request.CategoryID)
+func (p *ProductServiceImpl) Create(request request.ProductRequest) (response.ProductResponse, error) {
+	categoryResponse, err := p.CategoryService.GetById(request.CategoryID)
+	if err != nil {
+		return response.ProductResponse{}, err
+	}
 
 	product := entity.Product{
 		Name:       request.Name,
@@ -63,7 +68,9 @@ func (p *ProductServiceImpl) Create(request request.ProductRequest) response.Pro
 	}
 
 	save, err := p.ProductRepository.Save(product)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.ProductResponse{}, err
+	}
 
 	productResponse := response.ProductResponse{
 		ID:        save.ID,
@@ -75,14 +82,19 @@ func (p *ProductServiceImpl) Create(request request.ProductRequest) response.Pro
 		UpdatedAt: save.UpdatedAt,
 	}
 
-	return productResponse
+	return productResponse, nil
 }
 
-func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) response.ProductResponse {
+func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) (response.ProductResponse, error) {
 	findById, err := p.ProductRepository.FindById(request.ID)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.ProductResponse{}, err
+	}
 
-	categoryResponse, _ := p.CategoryService.GetById(request.CategoryID)
+	categoryResponse, err := p.CategoryService.GetById(request.CategoryID)
+	if err != nil {
+		return response.ProductResponse{}, err
+	}
 
 	findById.Name = request.Name
 	findById.Price = request.Price
@@ -90,7 +102,9 @@ func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) respon
 	findById.CategoryID = categoryResponse.ID
 
 	save, err := p.ProductRepository.Save(findById)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.ProductResponse{}, err
+	}
 
 	productResponse := response.ProductResponse{
 		ID:        save.ID,
@@ -102,16 +116,17 @@ func (p *ProductServiceImpl) Update(request request.ProductUpdateRequest) respon
 		UpdatedAt: save.UpdatedAt,
 	}
 
-	return productResponse
+	return productResponse, nil
 }
 
-func (p *ProductServiceImpl) Delete(id uint) string {
+func (p *ProductServiceImpl) Delete(id uint) error {
 	findById, err := p.ProductRepository.FindById(id)
-	halper.PanicIfError(err)
-	err = p.ProductRepository.Delete(findById)
-	halper.PanicIfError(err)
+	if err != nil {
+		return err
+	}
 
-	return "delete successfully"
+	err = p.ProductRepository.Delete(findById)
+	return err
 }
 
 func NewProductService(repository repository.ProductRepository, service service.CategoryService) service.ProductService {

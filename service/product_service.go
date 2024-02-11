@@ -7,8 +7,8 @@ import (
 
 type ProductService interface {
 	GetAll() []response.ProductResponse
-	GetById(id uint) response.ProductResponse
-	Create(request request.ProductRequest) response.ProductResponse
-	Update(request request.ProductUpdateRequest) response.ProductResponse
-	Delete(id uint) string
+	GetById(id uint) (response.ProductResponse, error)
+	Create(request request.ProductRequest) (response.ProductResponse, error)
+	Update(request request.ProductUpdateRequest) (response.ProductResponse, error)
+	Delete(id uint) error
 }

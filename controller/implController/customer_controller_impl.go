@@ -121,7 +121,7 @@ func (c *CustomerControllerImpl) Delete(ctx *fiber.Ctx) error {
 		})
 	}
 
-	CustomerResponse := c.CustomerService.Delete(uint(paramsId))
+	err = c.CustomerService.Delete(uint(paramsId))
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
@@ -133,7 +133,7 @@ func (c *CustomerControllerImpl) Delete(ctx *fiber.Ctx) error {
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
-		Data:   CustomerResponse,
+		Data:   "successfully delete customer",
 	}
 	return ctx.Status(http.StatusOK).JSON(webResponse)
 }

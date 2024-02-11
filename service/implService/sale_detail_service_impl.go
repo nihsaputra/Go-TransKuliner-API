@@ -17,7 +17,8 @@ type SaleDetailServiceImpl struct {
 }
 
 func (s *SaleDetailServiceImpl) Create(saleDetailRequest request.SaleDetailRequest) response.SaleDetailResponse {
-	productResponse := s.ProductService.GetById(saleDetailRequest.ProductId)
+	productResponse, err := s.ProductService.GetById(saleDetailRequest.ProductId)
+	halper.PanicIfError(err)
 
 	if productResponse.Stock < saleDetailRequest.Quantity {
 		err := errors.New("stock kurang")
