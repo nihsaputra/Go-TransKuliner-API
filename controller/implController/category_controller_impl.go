@@ -11,28 +11,24 @@ import (
 	"net/http"
 )
 
-var validate *validator.Validate
-
 type CategoryControllerImpl struct {
 	CategoryService service.CategoryService
 }
 
 func (c *CategoryControllerImpl) GetAll(ctx *fiber.Ctx) error {
 	categoryResponses := c.CategoryService.GetAll()
-
 	webResponse := response.WebResponse{
 		Code:   200,
 		Status: "OK",
 		Data:   categoryResponses,
 	}
-	return ctx.Status(http.StatusOK).JSON(webResponse)
+	return ctx.Status(fiber.StatusOK).JSON(webResponse)
 }
 
 func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
 	paramsId, err := ctx.ParamsInt("id")
 	// validasi paramsId
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
@@ -43,7 +39,6 @@ func (c *CategoryControllerImpl) GetById(ctx *fiber.Ctx) error {
 	categoryResponse, err := c.CategoryService.GetById(uint(paramsId))
 	// validasi findById
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusNotFound).JSON(response.ErrorResponse{
 			Code:    404,
 			Status:  "NOT_FOUND",
@@ -64,7 +59,6 @@ func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 	err := ctx.BodyParser(&categoryRequest)
 	// validation bodyParser request
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
@@ -81,7 +75,6 @@ func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 			sprintf := fmt.Sprintf("Error field: %s, on condition: %s", e.Field(), e.ActualTag())
 			messages = append(messages, sprintf)
 		}
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
@@ -92,14 +85,12 @@ func (c *CategoryControllerImpl) Create(ctx *fiber.Ctx) error {
 	categoryResponse, err := c.CategoryService.Create(categoryRequest)
 	// validasi create
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
 			Message: err.Error(),
 		})
 	}
-
 	webResponse := response.WebResponse{
 		Code:   201,
 		Status: "CREATED",
@@ -121,7 +112,6 @@ func (c *CategoryControllerImpl) Update(ctx *fiber.Ctx) error {
 			sprintf := fmt.Sprintf("Error field: %s, on condition: %s", e.Field(), e.ActualTag())
 			messages = append(messages, sprintf)
 		}
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
@@ -132,7 +122,6 @@ func (c *CategoryControllerImpl) Update(ctx *fiber.Ctx) error {
 	categoryResponse, err := c.CategoryService.Update(categoryUpdateRequest)
 	// validasi update
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
@@ -152,7 +141,6 @@ func (c *CategoryControllerImpl) Delete(ctx *fiber.Ctx) error {
 	paramsId, err := ctx.ParamsInt("id")
 	// validasi paramsId
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",
@@ -163,7 +151,6 @@ func (c *CategoryControllerImpl) Delete(ctx *fiber.Ctx) error {
 	err = c.CategoryService.Delete(uint(paramsId))
 	// validasi delete
 	if err != nil {
-		// belum di handle jenis errornya
 		return ctx.Status(http.StatusBadRequest).JSON(response.ErrorResponse{
 			Code:    400,
 			Status:  "BAD_REQUEST",

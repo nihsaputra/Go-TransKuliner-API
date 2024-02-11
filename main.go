@@ -7,6 +7,7 @@ import (
 	"TransKuliner/repository/implRepository"
 	"TransKuliner/routes"
 	"TransKuliner/service/implService"
+	"github.com/gofiber/fiber/v2/middleware/recover"
 )
 
 func main() {
@@ -36,13 +37,14 @@ func main() {
 	productController := implController.NewProductController(productService)
 	saleController := implController.NewSaleController(saleService)
 
+	router := routes.Routes
+	router.Use(recover.New())
+
 	// Routes
 	routes.NewCustomerRouter(customerController)
 	routes.NewCategoryRouter(categoryController)
 	routes.NewProductRouter(productController)
 	routes.NewSaleRouter(saleController)
-
-	router := routes.Routes
 	err := router.Listen(":8080")
 	halper.PanicIfError(err)
 }

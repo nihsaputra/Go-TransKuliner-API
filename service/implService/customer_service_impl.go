@@ -13,13 +13,10 @@ type CustomerServiceImpl struct {
 	CustomerRepository repository.CustomerRepository
 }
 
-func (c *CustomerServiceImpl) GetAll() ([]response.CustomerResponse, error) {
+func (c *CustomerServiceImpl) GetAll() []response.CustomerResponse {
 	var customerResponses []response.CustomerResponse
 	findAll, err := c.CustomerRepository.FindAll()
-
-	if err != nil {
-		return customerResponses, err
-	}
+	halper.PanicIfError(err)
 
 	for _, customer := range findAll {
 		customerResponse := response.CustomerResponse{
@@ -33,7 +30,7 @@ func (c *CustomerServiceImpl) GetAll() ([]response.CustomerResponse, error) {
 		customerResponses = append(customerResponses, customerResponse)
 	}
 
-	return customerResponses, nil
+	return customerResponses
 }
 
 func (c *CustomerServiceImpl) GetById(id uint) (response.CustomerResponse, error) {
@@ -55,14 +52,16 @@ func (c *CustomerServiceImpl) GetById(id uint) (response.CustomerResponse, error
 	return customerResponse, nil
 }
 
-func (c *CustomerServiceImpl) Create(request request.CustomerRequest) response.CustomerResponse {
+func (c *CustomerServiceImpl) Create(request request.CustomerRequest) (response.CustomerResponse, error) {
 	customer := entity.Customer{
 		Name:        request.Name,
 		Email:       request.Email,
 		PhoneNumber: request.PhoneNumber,
 	}
 	save, err := c.CustomerRepository.Save(customer)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.CustomerResponse{}, err
+	}
 
 	customerResponse := response.CustomerResponse{
 		ID:          save.ID,
@@ -73,19 +72,23 @@ func (c *CustomerServiceImpl) Create(request request.CustomerRequest) response.C
 		UpdatedAt:   save.UpdatedAt,
 	}
 
-	return customerResponse
+	return customerResponse, nil
 }
 
-func (c *CustomerServiceImpl) Update(request request.CustomerUpdateRequest) response.CustomerResponse {
+func (c *CustomerServiceImpl) Update(request request.CustomerUpdateRequest) (response.CustomerResponse, error) {
 	findById, err := c.CustomerRepository.FindById(request.ID)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.CustomerResponse{}, err
+	}
 
 	findById.Name = request.Name
 	findById.Email = request.Email
 	findById.PhoneNumber = request.PhoneNumber
 
 	save, err := c.CustomerRepository.Save(findById)
-	halper.PanicIfError(err)
+	if err != nil {
+		return response.CustomerResponse{}, err
+	}
 
 	customerResponse := response.CustomerResponse{
 		ID:          save.ID,
@@ -96,16 +99,20 @@ func (c *CustomerServiceImpl) Update(request request.CustomerUpdateRequest) resp
 		UpdatedAt:   save.UpdatedAt,
 	}
 
-	return customerResponse
+	return customerResponse, nil
 }
 
-func (c *CustomerServiceImpl) Delete(id uint) string {
+func (c *CustomerServiceImpl) Delete(id uint) error {
 	findById, err := c.CustomerRepository.FindById(id)
-	halper.PanicIfError(err)
+	if err != nil {
+		return err
+	}
 	err = c.CustomerRepository.Delete(findById)
-	halper.PanicIfError(err)
+	if err != nil {
+		return err
+	}
 
-	return "delete successfully"
+	return nil
 }
 
 func NewCustomerService(repository repository.CustomerRepository) service.CustomerService {
